@@ -1,34 +1,29 @@
-DirectiveRegistry.registerDirective('xexeu-bind', function(hook, node) {
-  if (!this._controller.callbacks[hook]) {
-    this._controller.callbacks[hook] = []
-  }
-  this._controller.callbacks[hook].push(
-    (value) => {
-      node.innerText = value;
-    }
-  );
-})
-
-DirectiveRegistry.registerDirective('xexeu-model', function(hook, node) {
-  if (!this._controller.callbacks[hook]) {
-    this._controller.callbacks[hook] = []
-  }
-
-  const changeCalback = (e) => {
-    this._controller[hook] = (e.target.type !== 'text' ? e.target.checked : e.target.value);
-  }
-
-  node.addEventListener('change', changeCalback);
-  node.addEventListener('input', changeCalback);
-
-  this._controller.callbacks[hook].push(
-    (value) => {
-      node.value = value;
-      node.checked = value;
-    }
-  );
+DirectiveRegistry.registerDirective('xexeu-bind', (model, node) => {
+  node.innerText = model;
 });
 
-DirectiveRegistry.registerDirective('xexeu-change', function(hook, node) {
-  node.addEventListener('input', this._controller[hook]);
-})
+class XexeuModel extends Directive {
+  $created(node) {
+    node.addEventListener('change', this.onInputChanged.bind(this));
+    node.addEventListener('input', this.onInputChanged.bind(this));
+  }
+
+  $modelChanged(model) {
+    this.node.value = model;
+    this.node.checked = model;
+  }
+
+  onInputChanged(e) {
+    this.model = (e.target.type !== 'text' ? e.target.checked : e.target.value);
+  }
+}
+
+DirectiveRegistry.registerDirective('xexeu-model', XexeuModel);
+
+class XexeuChange extends Directive {
+  $created(node) {
+    node.addEventListener('input', this.triggerHook);
+  }
+}
+
+DirectiveRegistry.registerDirective('xexeu-change', XexeuChange);

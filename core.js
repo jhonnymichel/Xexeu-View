@@ -48,9 +48,9 @@ class Xexeu {
         if (!this._controller.hasOwnProperty(item[xexeuBind]) && xexeuBind !== 'domNode') {
           this._setupObservableGetters({[item[xexeuBind]]: '' });
         }
-
-        if (DirectiveRegistry.getDirective(xexeuBind)) {
-          DirectiveRegistry.getDirective(xexeuBind).call(this, item[xexeuBind], item.domNode);
+        const directive = DirectiveRegistry.getDirective(xexeuBind);
+        if (directive) {
+          new directive(item[xexeuBind], item.domNode, this);
         }
       }
     }
