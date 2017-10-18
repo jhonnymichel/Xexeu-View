@@ -7,14 +7,18 @@ class Xexeu {
       this._controller[method] = methods[method].bind(this._controller);
     }
     this._domObservers = [];
-    this._setupObservableGetters(viewModel);
+    this._setupObservableGetters(JSON.parse(JSON.stringify(viewModel)));
     this.setupObservers(this._parseObserverCandidatesFromViewNode());
     this.renderInitialView(viewModel);
+    window.xexeu = this;
   }
 
-  renderInitialView(viewModel) {
+  renderInitialView(viewModel, parent=this._controller) {
     for (let prop in viewModel) {
-      this._controller[prop] = viewModel[prop];
+      parent[prop] = viewModel[prop];
+      if (typeof viewModel[prop] === 'object') {
+        this.renderInitialView(viewModel[prop], parent[prop]);
+      }
     }
   }
 
@@ -25,17 +29,29 @@ class Xexeu {
       );
   }
 
-  _setupObservableGetters(viewModel) {
+  _setupObservableGetters(viewModel, parent=this._controller, callbackName='', thisObj=this._controller) {
     for (let property in viewModel) {
-      Object.defineProperty(this._controller, property, {
+      let _callbackName = callbackName ? `${callbackName}.${property}` : property;
+      if (typeof viewModel[property] === 'object' && !parent.hasOwnProperty(property)) {
+        parent[property] = viewModel[property];
+        this._setupObservableGetters(viewModel[property], parent[property], _callbackName);
+        _callbackName = callbackName ? `${callbackName}.${property}` : property;
+      }
+      thisObj[`_${_callbackName}`] = viewModel[property];
+      Object.defineProperty(parent, property, {
         get() {
-          return this._property;
+          return thisObj[`_${_callbackName}`];
         },
         set(value) {
-          if (this.callbacks[property]) {
-            this.callbacks[property].forEach(callback => callback(value));
+          debugger
+          if (thisObj.callbacks[_callbackName]) {
+            let _value = value;
+            if (typeof _value === 'object') {
+              _value = JSON.stringify(_value);
+            }
+            thisObj.callbacks[_callbackName].forEach(callback => callback(_value));
           }
-          this._property = value;
+          thisObj[`_${_callbackName}`] = value;
         }
       })
     }
