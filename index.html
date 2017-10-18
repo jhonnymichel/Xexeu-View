@@ -1,0 +1,34 @@
+<html>
+  <head>
+
+  </head>
+  <body id="app">
+    <input type="text" xexeu-model="inputValue">
+    <input type="text" xexeu-model="inputValue">
+    <p xexeu-bind="inputValue"></p>
+    <br/>
+    <input type="checkbox" xexeu-model="isChecked">
+    <p>The box is <span xexeu-bind="isChecked"></span></p>
+    <script src="./directive-registry.js"></script>
+    <script src="./directives.js"></script>
+    <script src="./core.js"></script>
+    <script>
+      const xexeu = new Xexeu({
+        el: '#app',
+        viewModel: {
+          inputValue: 'naruto',
+          otherInputValue: '',
+          isChecked: true
+        },
+        methods: {
+          onInputChange(e) {
+            this.inputValue = e.target.value;
+          },
+          onNewInputChange(e) {
+            this.otherInputValue = e.target.value;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
