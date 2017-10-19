@@ -56,10 +56,21 @@ class Directive {
   }
 
   get model() {
-    return this._xexeuViewModel[this._hook];
+    const splitted = this._hook.split('.');
+    let property = this._xexeuViewModel;
+    splitted.forEach((i) => property = property[i]);
+    return property;
   }
 
   set model(value) {
-    this._xexeuViewModel[this._hook] = value;
+    const splitted = this._hook.split('.');
+    let property = this._xexeuViewModel;
+
+    splitted.forEach((i) => {
+      if (typeof property[i] === 'object') {
+        property = property[i]
+      }
+    });
+    property[splitted[splitted.length-1]] = value;
   }
 }
