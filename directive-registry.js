@@ -37,16 +37,17 @@ class Directive {
   constructor(hook, node, xexeu) {
     this.node = node;
     this._hook = hook;
-    this._xexeuController = xexeu.$controller;
+    this._xexeuCallbacks = xexeu.$_callbacks;
+    this._xexeuViewModel = xexeu.$viewModel;
 
-    if (!this._xexeuController.callbacks[hook]) {
-      this._xexeuController.callbacks[hook] = [];
+    if (!this._xexeuCallbacks[hook]) {
+      this._xexeuCallbacks[hook] = [];
     }
     if (this.$modelChanged) {
-      this._xexeuController.callbacks[hook].push(this.$modelChanged.bind(this));
+      this._xexeuCallbacks[hook].push(this.$modelChanged.bind(this));
     }
-    if (typeof this._xexeuController.$viewModel[hook] === 'function') {
-      this.triggerHook = xexeu_.controller.$viewModel[hook];
+    if (typeof this._xexeuViewModel[hook] === 'function') {
+      this.triggerHook = this._xexeuViewModel[hook];
     }
 
     if (this.$created) {
@@ -55,10 +56,10 @@ class Directive {
   }
 
   get model() {
-    return this._xexeuController.$viewModel[this._hook];
+    return this._xexeuViewModel[this._hook];
   }
 
   set model(value) {
-    this._xexeuController.$viewModel[this._hook] = value;
+    this._xexeuViewModel[this._hook] = value;
   }
 }

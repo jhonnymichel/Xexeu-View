@@ -1,37 +1,41 @@
 class Xexeu {
-  constructor( {el, viewModel, methods} ) {
-    this._viewNode = document.querySelector(el);
-    this.$controller = {};
-    this.$controller.callbacks = {};
-    for (let method in methods) {
-      this.$controller[method] = methods[method].bind(this.$controller);
-    }
-    this._domObservers = [];
-    this._setupObservableGetters(JSON.parse(JSON.stringify(viewModel)));
-    this.setupObservers(this._parseObserverCandidatesFromViewNode());
-    this.renderInitialView(viewModel);
+  constructor( {node, viewModel, methods} ) {
+    this._viewNode = document.querySelector(node);
+    this.$_callbacks = {};
+    this.$_domObservers = [];
+    this.$viewModel = Object.create(
+      {},
+      this._getObservableProperties(JSON.parse(JSON.stringify(viewModel)))
+    );
+    this._bindMethodsToViewModel(methods);
+    this._setupDirectives(this._parseDirectivesFromViewNode());
+    this._renderInitialView(viewModel);
   }
 
-  renderInitialView(viewModel, parent=this.$controller.$viewModel) {
+  _bindMethodsToViewModel(methods) {
+    for (let method in methods) {
+      this.$viewModel[method] = methods[method].bind(this.$viewModel);
+    }
+  }
+
+  _renderInitialView(viewModel, parent=this.$viewModel) {
     for (let prop in viewModel) {
       parent[prop] = viewModel[prop];
       if (typeof viewModel[prop] === 'object') {
-        this.renderInitialView(viewModel[prop], parent[prop]);
+        this._renderInitialView(viewModel[prop], parent[prop]);
       }
     }
-
-    viewModel = this.$controller.$viewModel;
   }
 
-  _parseObserverCandidatesFromViewNode() {
+  _parseDirectivesFromViewNode() {
     return [...this._viewNode.querySelectorAll('*')]
       .filter(
         el => [...el.attributes].some(attr => attr.nodeName.startsWith('xexeu-'))
       );
   }
 
-  _setupObservableGetters(viewModel) {
-    const callbackList = this.$controller.callbacks;
+  _getObservableProperties(viewModel) {
+    const callbackList = this.$_callbacks;
     const _viewModel = {};
     for (let property in viewModel) {
       _viewModel[property] = {
@@ -46,12 +50,12 @@ class Xexeu {
         }
       }
     }
-    this.$controller.$viewModel = Object.create({}, _viewModel);
+    return _viewModel;
   }
 
-  setupObservers(observers) {
+  _setupDirectives(observers) {
     observers.forEach(this._setupObserverListForNode.bind(this));
-    for (let item of this._domObservers) {
+    for (let item of this.$_domObservers) {
       for (let xexeuBind in item) {
         const directive = DirectiveRegistry.getDirective(xexeuBind);
         if (directive) {
@@ -62,7 +66,7 @@ class Xexeu {
   }
 
   _setupObserverListForNode(node) {
-    const domObserver = this._domObservers[this._domObservers.push({}) - 1];
+    const domObserver = this.$_domObservers[this.$_domObservers.push({}) - 1];
     domObserver.domNode = node;
     [...node.attributes]
       .filter(attr => attr.nodeName.startsWith('xexeu-'))
