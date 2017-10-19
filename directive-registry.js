@@ -37,13 +37,14 @@ class Directive {
   constructor(hook, node, xexeu) {
     this.node = node;
     this._hook = hook;
-    this._xexeuController = xexeu._controller;
+    this._xexeuController = xexeu.$controller;
 
     if (!this._xexeuController.callbacks[hook]) {
       this._xexeuController.callbacks[hook] = [];
     }
-
-    this._xexeuController.callbacks[hook].push(this.$modelChanged.bind(this));
+    if (this.$modelChanged) {
+      this._xexeuController.callbacks[hook].push(this.$modelChanged.bind(this));
+    }
     if (typeof this._xexeuController.$viewModel[hook] === 'function') {
       this.triggerHook = xexeu_.controller.$viewModel[hook];
     }

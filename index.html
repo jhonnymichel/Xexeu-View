@@ -4,7 +4,7 @@
   </head>
   <body id="app">
     <input type="text" xexeu-model="inputValue">
-    <input type="text" xexeu-model="otherInputValue">
+    <input type="text" xexeu-model="otherInputValue" xexeu-change="onInputChange">
     <p xexeu-bind="inputValue"></p>
     <br/>
     <input type="checkbox" xexeu-model="isChecked">
@@ -13,7 +13,7 @@
     <script src="./directives.js"></script>
     <script src="./core.js"></script>
     <script>
-      const xexeu = new Xexeu({
+      const app = new Xexeu({
         el: '#app',
         viewModel: {
           inputValue: 2,
@@ -22,6 +22,7 @@
         },
         methods: {
           onInputChange(e) {
+            debugger
             this.inputValue = e.target.value;
           },
           onNewInputChange(e) {

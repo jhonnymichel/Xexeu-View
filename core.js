@@ -1,19 +1,18 @@
 class Xexeu {
   constructor( {el, viewModel, methods} ) {
     this._viewNode = document.querySelector(el);
-    this._controller = {};
-    this._controller.callbacks = {};
+    this.$controller = {};
+    this.$controller.callbacks = {};
     for (let method in methods) {
-      this._controller[method] = methods[method].bind(this._controller);
+      this.$controller[method] = methods[method].bind(this.$controller);
     }
     this._domObservers = [];
     this._setupObservableGetters(JSON.parse(JSON.stringify(viewModel)));
     this.setupObservers(this._parseObserverCandidatesFromViewNode());
     this.renderInitialView(viewModel);
-    window.xexeu = this;
   }
 
-  renderInitialView(viewModel, parent=this._controller.$viewModel) {
+  renderInitialView(viewModel, parent=this.$controller.$viewModel) {
     for (let prop in viewModel) {
       parent[prop] = viewModel[prop];
       if (typeof viewModel[prop] === 'object') {
@@ -21,7 +20,7 @@ class Xexeu {
       }
     }
 
-    viewModel = this._controller;
+    viewModel = this.$controller.$viewModel;
   }
 
   _parseObserverCandidatesFromViewNode() {
@@ -32,7 +31,7 @@ class Xexeu {
   }
 
   _setupObservableGetters(viewModel) {
-    const callbackList = this._controller.callbacks;
+    const callbackList = this.$controller.callbacks;
     const _viewModel = {};
     for (let property in viewModel) {
       _viewModel[property] = {
@@ -47,7 +46,7 @@ class Xexeu {
         }
       }
     }
-    this._controller.$viewModel = Object.create({}, _viewModel);
+    this.$controller.$viewModel = Object.create({}, _viewModel);
   }
 
   setupObservers(observers) {
