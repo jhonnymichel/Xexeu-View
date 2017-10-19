@@ -44,8 +44,8 @@ class Directive {
     }
 
     this._xexeuController.callbacks[hook].push(this.$modelChanged.bind(this));
-    if (typeof this._xexeuController[hook] === 'function') {
-      this.triggerHook = xexeu_.controller[hook];
+    if (typeof this._xexeuController.$viewModel[hook] === 'function') {
+      this.triggerHook = xexeu_.controller.$viewModel[hook];
     }
 
     if (this.$created) {
@@ -54,10 +54,10 @@ class Directive {
   }
 
   get model() {
-    return this._xexeuController[this._hook];
+    return this._xexeuController.$viewModel[this._hook];
   }
 
   set model(value) {
-    this._xexeuController[this._hook] = value;
+    this._xexeuController.$viewModel[this._hook] = value;
   }
 }

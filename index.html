@@ -3,9 +3,9 @@
 
   </head>
   <body id="app">
-    <input type="text" xexeu-model="inputValue.teste">
     <input type="text" xexeu-model="inputValue">
-    <p xexeu-bind="inputValue.teste"></p>
+    <input type="text" xexeu-model="otherInputValue">
+    <p xexeu-bind="inputValue"></p>
     <br/>
     <input type="checkbox" xexeu-model="isChecked">
     <p>The box is checked? <span xexeu-bind="isChecked"></span></p>
@@ -16,10 +16,8 @@
       const xexeu = new Xexeu({
         el: '#app',
         viewModel: {
-          inputValue: {
-            teste: 2
-          },
-          otherInputValue: '',
+          inputValue: 2,
+          otherInputValue: 'saske',
           isChecked: true
         },
         methods: {

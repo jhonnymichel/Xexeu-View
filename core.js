@@ -13,13 +13,15 @@ class Xexeu {
     window.xexeu = this;
   }
 
-  renderInitialView(viewModel, parent=this._controller) {
+  renderInitialView(viewModel, parent=this._controller.$viewModel) {
     for (let prop in viewModel) {
       parent[prop] = viewModel[prop];
       if (typeof viewModel[prop] === 'object') {
         this.renderInitialView(viewModel[prop], parent[prop]);
       }
     }
+
+    viewModel = this._controller;
   }
 
   _parseObserverCandidatesFromViewNode() {
@@ -29,41 +31,29 @@ class Xexeu {
       );
   }
 
-  _setupObservableGetters(viewModel, parent=this._controller, callbackName='', thisObj=this._controller) {
+  _setupObservableGetters(viewModel) {
+    const callbackList = this._controller.callbacks;
+    const _viewModel = {};
     for (let property in viewModel) {
-      let _callbackName = callbackName ? `${callbackName}.${property}` : property;
-      if (typeof viewModel[property] === 'object' && !parent.hasOwnProperty(property)) {
-        parent[property] = viewModel[property];
-        this._setupObservableGetters(viewModel[property], parent[property], _callbackName);
-        _callbackName = callbackName ? `${callbackName}.${property}` : property;
-      }
-      thisObj[`_${_callbackName}`] = viewModel[property];
-      Object.defineProperty(parent, property, {
+      _viewModel[property] = {
         get() {
-          return thisObj[`_${_callbackName}`];
+          return this[`_${property}`];
         },
         set(value) {
-          debugger
-          if (thisObj.callbacks[_callbackName]) {
-            let _value = value;
-            if (typeof _value === 'object') {
-              _value = JSON.stringify(_value);
-            }
-            thisObj.callbacks[_callbackName].forEach(callback => callback(_value));
+          if (callbackList[property]) {
+            callbackList[property].forEach(callback => callback(value));
           }
-          thisObj[`_${_callbackName}`] = value;
+          this[`_${property}`] = value;
         }
-      })
+      }
     }
+    this._controller.$viewModel = Object.create({}, _viewModel);
   }
 
   setupObservers(observers) {
     observers.forEach(this._setupObserverListForNode.bind(this));
     for (let item of this._domObservers) {
       for (let xexeuBind in item) {
-        if (!this._controller.hasOwnProperty(item[xexeuBind]) && xexeuBind !== 'domNode') {
-          this._setupObservableGetters({[item[xexeuBind]]: '' });
-        }
         const directive = DirectiveRegistry.getDirective(xexeuBind);
         if (directive) {
           new directive(item[xexeuBind], item.domNode, this);
