@@ -13,14 +13,14 @@
       <input type="checkbox" xexeu-model="isChecked">
       <p>The box is checked? <span xexeu-bind="isChecked"></span></p>
     </div>
+    <input type="text" xexeu-change="onInputChange"/>
     <div>
       <input type="text" xexeu-model="newValue.test">
       <p xexeu-bind="newValue.test"></p>
     </div>
-    <script src="./directive-registry.js"></script>
-    <script src="./directives.js"></script>
-    <script src="./core.js"></script>
-    <script>
+    <script type="module">
+      import Xexeu from './core.js';
+
       const app = new Xexeu({
         node: '#app',
         viewModel: {

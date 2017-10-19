@@ -1,3 +1,5 @@
+import { DirectiveRegistry, Directive } from './directive-registry.js';
+
 DirectiveRegistry.registerDirective('xexeu-bind', (model, node) => {
   node.innerText = model;
 });

@@ -1,4 +1,8 @@
-class Xexeu {
+import { DirectiveRegistry } from './directive-registry.js'
+import { isObject } from './utils.js'
+import './directives.js'
+
+export default class Xexeu {
   constructor( {node, viewModel, methods} ) {
     this._viewNode = document.querySelector(node);
     this.$_callbacks = {};
@@ -18,7 +22,7 @@ class Xexeu {
 
   _renderInitialView(viewModel, parent=this.$viewModel) {
     for (let prop in viewModel) {
-      if (typeof viewModel[prop] === 'object') {
+      if (isObject(viewModel[prop])) {
         this._renderInitialView(viewModel[prop], parent[prop]);
         continue;
       }
@@ -40,7 +44,7 @@ class Xexeu {
     for (let property in viewModel) {
       let _callbackPrep = callbackPrep ? callbackPrep + '.' + property : property;
 
-      if (typeof viewModel[property] === 'object') {
+      if (isObject(viewModel[property])) {
         nestedObjects[property] = this._getObservableProperties(viewModel[property], _callbackPrep);
       }
 

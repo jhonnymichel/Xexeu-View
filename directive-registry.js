@@ -1,39 +1,24 @@
-let directiveRegistryInstance = null;
-
-class DirectiveRegistry {
-
-  static registerDirective(name, initializer) {
-    if (!directiveRegistryInstance) {
-      new DirectiveRegistry();
-    }
-
+class _DirectiveRegistry {
+  registerDirective(name, initializer) {
     if (!Directive.isPrototypeOf(initializer)) {
-      directiveRegistryInstance[name] = class extends Directive {
+      this[name] = class extends Directive {
         $modelChanged(model){
           initializer(model, this.node);
         }
       };
     } else {
-      directiveRegistryInstance[name] = initializer;
+      this[name] = initializer;
     }
   }
 
-  static getDirective(name) {
-    return directiveRegistryInstance[name];
-  }
-
-  constructor() {
-    if (!directiveRegistryInstance) {
-      directiveRegistryInstance = this;
-    } else {
-      throw('This is a singleton. use the static methods');
-    }
-
-    return directiveRegistryInstance;
+  getDirective(name) {
+    return this[name];
   }
 }
 
-class Directive {
+export let DirectiveRegistry = new _DirectiveRegistry();
+
+export class Directive {
   constructor(hook, node, xexeu) {
     this.node = node;
     this._hook = hook;
