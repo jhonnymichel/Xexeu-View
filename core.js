@@ -67,8 +67,8 @@ export default class Xexeu {
     return _viewModel;
   }
 
-  _setupDirectives(observers) {
-    observers.forEach(this._setupObserverListForNode.bind(this));
+  _setupDirectives(directives) {
+    directives.forEach(this._setupObserverListForNode.bind(this));
     for (let item of this.$_domObservers) {
       for (let xexeuBind in item) {
         const directive = DirectiveRegistry.getDirective(xexeuBind);
