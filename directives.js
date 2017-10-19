@@ -9,6 +9,7 @@ class XexeuModel extends Directive {
   }
 
   $modelChanged(model) {
+    debugger
     this.node.value = model;
     this.node.checked = model;
   }

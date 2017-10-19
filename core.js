@@ -3,10 +3,8 @@ class Xexeu {
     this._viewNode = document.querySelector(node);
     this.$_callbacks = {};
     this.$_domObservers = [];
-    this.$viewModel = Object.create(
-      {},
-      this._getObservableProperties(JSON.parse(JSON.stringify(viewModel)))
-    );
+    this.$viewModel =
+      this._getObservableProperties(JSON.parse(JSON.stringify(viewModel)));
     this._bindMethodsToViewModel(methods);
     this._setupDirectives(this._parseDirectivesFromViewNode());
     this._renderInitialView(viewModel);
@@ -20,10 +18,11 @@ class Xexeu {
 
   _renderInitialView(viewModel, parent=this.$viewModel) {
     for (let prop in viewModel) {
-      parent[prop] = viewModel[prop];
       if (typeof viewModel[prop] === 'object') {
         this._renderInitialView(viewModel[prop], parent[prop]);
+        continue;
       }
+      parent[prop] = viewModel[prop];
     }
   }
 
@@ -34,21 +33,32 @@ class Xexeu {
       );
   }
 
-  _getObservableProperties(viewModel) {
-    const callbackList = this.$_callbacks;
+  _getObservableProperties(viewModel, callbackPrep) {
+    let callbackList = this.$_callbacks;
+    let nestedObjects = {};
     const _viewModel = {};
     for (let property in viewModel) {
-      _viewModel[property] = {
+      let _callbackPrep = callbackPrep ? callbackPrep + '.' + property : property;
+
+      if (typeof viewModel[property] === 'object') {
+        nestedObjects[property] = this._getObservableProperties(viewModel[property], _callbackPrep);
+      }
+
+      Object.defineProperty(_viewModel, property, {
         get() {
           return this[`_${property}`];
         },
         set(value) {
-          if (callbackList[property]) {
-            callbackList[property].forEach(callback => callback(value));
+          if (callbackList[_callbackPrep]) {
+            callbackList[_callbackPrep].forEach(callback => callback(value));
           }
           this[`_${property}`] = value;
         }
-      }
+      });
+    }
+
+    for (let nestedObject in nestedObjects) {
+      _viewModel[nestedObject] = nestedObjects[nestedObject];
     }
     return _viewModel;
   }

@@ -3,12 +3,20 @@
 
   </head>
   <body id="app">
-    <input type="text" xexeu-model="inputValue">
-    <input type="text" xexeu-model="otherInputValue" xexeu-change="onInputChange">
-    <p xexeu-bind="inputValue"></p>
-    <br/>
-    <input type="checkbox" xexeu-model="isChecked">
-    <p>The box is checked? <span xexeu-bind="isChecked"></span></p>
+    <div>
+      Insira seu nome: <input type="text" xexeu-model="inputValue">
+    </div>
+    <h2>
+      Seja bem vindo, <span xexeu-bind="inputValue"></span>!
+    </h2>
+    <div>
+      <input type="checkbox" xexeu-model="isChecked">
+      <p>The box is checked? <span xexeu-bind="isChecked"></span></p>
+    </div>
+    <div>
+      <input type="text" xexeu-model="newValue.test">
+      <p xexeu-bind="newValue.test"></p>
+    </div>
     <script src="./directive-registry.js"></script>
     <script src="./directives.js"></script>
     <script src="./core.js"></script>
@@ -18,7 +26,10 @@
         viewModel: {
           inputValue: 2,
           otherInputValue: 'saske',
-          isChecked: true
+          isChecked: true,
+          newValue: {
+            test: 'it now works with nested stuff'
+          }
         },
         methods: {
           onInputChange(e) {
