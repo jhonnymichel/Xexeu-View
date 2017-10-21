@@ -47,6 +47,7 @@ export default class Xexeu {
       if (isObject(viewModel[property])) {
         nestedObjects[property] = this._getObservableProperties(viewModel[property], _callbackPrep);
       }
+      _viewModel[`_${property}`] = viewModel[property];
 
       Object.defineProperty(_viewModel, property, {
         get() {
@@ -67,13 +68,54 @@ export default class Xexeu {
     return _viewModel;
   }
 
+  _shiftAndAppendNextBindingProperty(computedProperties, propertiesList, parent) {
+    if (computedProperties[0].match(/\[/)) {
+      computedProperties.unshift(computedProperties[0].split(/\]/).shift());
+      computedProperties[1] = computedProperties[1].split(/\[/).pop();
+    }
+    let keyToConcat = computedProperties.shift().split(/\]/)[0];
+    propertiesList[propertiesList.length -1] += `.${parent[keyToConcat]}`;
+  }
+
+  _cleanBindingListNoise(array) {
+    while (!array[array.length -1]) {
+      array.pop();
+    }
+  }
+
+  _getBindingList(item, parent=this.$viewModel) {
+    const propertiesList = [];
+    let computedProperties = item.split(/\[(.*)|\](.*)/);
+    if (computedProperties.length === 1) {
+      return computedProperties;
+    }
+
+    this._cleanBindingListNoise(computedProperties)
+
+    propertiesList.push(computedProperties.shift());
+
+    while (computedProperties.length) {
+      if (computedProperties[0].match((/\[/))) {
+        if (computedProperties[0].indexOf('[') < computedProperties[0].indexOf[']']) {
+          const binding = computedProperties[0];
+          propertiesList.push(this._getBindingList(binding.split(']')[0]));
+        } else {
+          this._shiftAndAppendNextBindingProperty(computedProperties, propertiesList, parent);
+        }
+      } else {
+        this._shiftAndAppendNextBindingProperty(computedProperties, propertiesList, parent);
+      }
+    }
+    return propertiesList;
+  }
+
   _setupDirectives(directives) {
     directives.forEach(this._setupObserverListForNode.bind(this));
     for (let item of this.$_domObservers) {
       for (let xexeuBind in item) {
         const directive = DirectiveRegistry.getDirective(xexeuBind);
         if (directive) {
-          new directive(item[xexeuBind], item.domNode, this);
+          new directive(this._getBindingList(item[xexeuBind]), item.domNode, this);
         }
       }
     }

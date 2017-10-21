@@ -19,9 +19,10 @@ class _DirectiveRegistry {
 export let DirectiveRegistry = new _DirectiveRegistry();
 
 export class Directive {
-  constructor(hook, node, xexeu) {
+  constructor(hooks, node, xexeu) {
+    debugger
     this.node = node;
-    this._hook = hook;
+    this._hooks = hooks;
     this._xexeuCallbacks = xexeu.$_callbacks;
     this._xexeuViewModel = xexeu.$viewModel;
 

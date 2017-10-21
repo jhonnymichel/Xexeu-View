@@ -18,17 +18,24 @@
       <input type="text" xexeu-model="newValue.test">
       <p xexeu-bind="newValue.test"></p>
     </div>
+    <div>
+      <input type="number" xexeu-model="currentItem">
+      <p xexeu-bind="newValue[currentIteratee][inputValue]"></p>
+    </div>
     <script type="module">
       import Xexeu from './core.js';
 
       const app = new Xexeu({
         node: '#app',
         viewModel: {
+          currentItem: 0,
           inputValue: 2,
           otherInputValue: 'saske',
           isChecked: true,
+          currentIteratee: "array",
           newValue: {
-            test: 'it now works with nested stuff'
+            test: 'it now works with nested stuff',
+            array: ['chidori', 'rasengan', 'dorime']
           }
         },
         methods: {
