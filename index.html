@@ -18,10 +18,9 @@
       <input type="text" xexeu-model="newValue.test">
       <p xexeu-bind="newValue.test"></p>
     </div>
-    <script type="module">
-      import Xexeu from './core.js';
-
-      const app = new Xexeu({
+    <script src="dist/xexeu-view.min.js"></script>
+    <script type="text/javascript">
+      new Xexeu({
         node: '#app',
         viewModel: {
           inputValue: 2,
