@@ -1,3 +1,23 @@
+# Logs
+logs
+*.logs
+npm-debug.log*
+
+# Dependency directories
 node_modules
-npm-debug.log
+
+# production
 dist
+
+# misc
+.DS_STORE
+
+# git generated files
+*.patch
+*.diff
+*.orig
+*.rej
+
+*.swp
+*.swo
+
