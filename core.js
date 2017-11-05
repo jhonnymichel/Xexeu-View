@@ -109,6 +109,68 @@ export default class Xexeu {
     return propertiesList;
   }
 
+  _resolveDeepBracket(selector) {
+    const splitted = selector.split('.');
+    let property = this.$viewModel;
+    splitted.forEach((i) => property = property[i]);
+    return property;
+  }
+
+  _shiftAndAppendNextBindingProperty(computedProperties, propertiesList, parent) {
+    debugger
+    if (computedProperties[0].match(/\[/)) {
+      computedProperties.unshift(computedProperties[0].split(/\]/).shift());
+      computedProperties[1] = computedProperties[1].split(/\[/).pop();
+    }
+    let keyToConcat = computedProperties.shift().split(/\]/)[0];
+    propertiesList.push(keyToConcat);
+    if (propertiesList[0].includes('.')) {
+      propertiesList.push(propertiesList[0]);
+    }
+    if (keyToConcat.includes('.')) {
+      keyToConcat = this._resolveDeepBracket(keyToConcat);
+      return propertiesList[0] += `.${keyToConcat}`;
+    }
+    return propertiesList[0] += `.${parent[keyToConcat]}`;
+  }
+
+  _cleanBindingListNoise(array) {
+    while (!array[array.length -1]) {
+      array.pop();
+    }
+  }
+
+  _getBindingList(item, parent=this.$viewModel) {
+    debugger
+    const propertiesList = [];
+    let computedProperties = item.split(/\[(.*)|\](.*)/);
+    if (computedProperties.length === 1) {
+      return computedProperties;
+    }
+
+    this._cleanBindingListNoise(computedProperties)
+
+    propertiesList.push(computedProperties.shift());
+
+    while (computedProperties.length) {
+      if (computedProperties[0].match((/\[/))) {
+        if (computedProperties[0].indexOf('[') < computedProperties[0].indexOf(']')) {
+          const binding = computedProperties[0];
+          const computedBindings = this._getBindingList(binding.split(']')[0]);
+          computedProperties[0] = computedProperties[0].replace(binding.split(']')[0] + ']]', computedBindings[0]);
+          computedProperties = computedProperties[0].split(/\[(.*)|\](.*)/);
+          this._cleanBindingListNoise(computedProperties);
+          this._shiftAndAppendNextBindingProperty(computedProperties, propertiesList, parent);
+        } else {
+          this._shiftAndAppendNextBindingProperty(computedProperties, propertiesList, parent[propertiesList[0]]);
+        }
+      } else {
+        this._shiftAndAppendNextBindingProperty(computedProperties, propertiesList, parent);
+      }
+    }
+    return propertiesList;
+  }
+
   _setupDirectives(directives) {
     directives.forEach(this._setupObserverListForNode.bind(this));
     for (let item of this.$_domObservers) {
