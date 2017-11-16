@@ -1,11 +1,11 @@
 import babel from 'rollup-plugin-babel'
 
 export default {
-  input: './lib/index.js',
+  input: './src/index.js',
   output: {
     file: 'dist/xexeu-view.min.js',
     format: 'iife',
-    name: "Xexeu"
+    name: "XexeuView"
   },
   sourceMap: 'inline',
   plugins: [
