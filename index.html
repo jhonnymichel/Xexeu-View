@@ -1,0 +1,39 @@
+<html>
+  <head>
+
+  </head>
+  <body id="app">
+    <div>
+      What is your name?: <input type="text" xexeu-model="inputValue">
+    </div>
+    <h2>
+      Welcome, <span xexeu-bind="inputValue"></span>!
+    </h2>
+    <div>
+      <input type="checkbox" xexeu-model="isChecked">
+      <p>The box is checked? <span xexeu-bind="isChecked"></span></p>
+    </div>
+    <script src="./devServer/xexeu-view.js"></script>
+    <script type="text/javascript">
+      new Xexeu({
+        node: '#app',
+        viewModel: {
+          inputValue: 2,
+          otherInputValue: 'saske',
+          isChecked: true,
+          newValue: {
+            test: 'it now works with nested stuff'
+          }
+        },
+        methods: {
+          onInputChange(e) {
+            this.inputValue = e.target.value;
+          },
+          onNewInputChange(e) {
+            this.otherInputValue = e.target.value;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
