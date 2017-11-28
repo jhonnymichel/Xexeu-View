@@ -5,12 +5,12 @@ npm-debug.log*
 
 # Dependency directories
 node_modules
-
-# production
-dist
-
 # misc
 .DS_STORE
+
+# devServer 
+devServer/*.*
+!devServer/index.html
 
 # git generated files
 *.patch

@@ -5,7 +5,11 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node_modules/rollup/bin/rollup --config rollup.config.js"
+    "rollup": "node_modules/rollup/bin/rollup",
+    "demo": "npm run rollup -- --config rollup.demo.config.js",
+    "dist": "npm run rollup -- --config rollup.config.js",
+    "build": "npm run demo && npm run dist",
+    "dev": "npm run rollup -- --config rollup.dev.config.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +27,11 @@
     "babel-preset-latest": "^6.24.1",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-livereload": "^0.6.0",
+    "rollup-plugin-serve": "^0.4.2",
     "rollup-plugin-uglify-es": "0.0.1"
+  },
+  "dependencies": {
+    "rollup-plugin-sourcemaps": "^0.4.2"
   }
 }

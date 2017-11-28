@@ -1,3 +1,3 @@
-import Xexeu from './core'
+import Xexeu from './core';
 
-export default Xexeu
+export default Xexeu;

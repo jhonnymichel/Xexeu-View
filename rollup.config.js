@@ -5,8 +5,8 @@ export default {
   input: './src/index.js',
   output: {
     file: 'dist/xexeu-view.min.js',
-    format: 'cjs',
-    name: "XexeuView"
+    format: 'iife',
+    name: "Xexeu"
   },
   plugins: [
     uglify(),
