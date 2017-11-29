@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "description": "A view library built for learning purposes. implements the Observer design pattern.",
   "main": "dist/xexeu-view.min.js",
-  "module": "src/index.js",
+  "module": "dist/xexeu-view.es.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "rollup": "node_modules/rollup/bin/rollup",
-    "demo": "npm run rollup -- --config rollup.demo.config.js",
     "dist": "npm run rollup -- --config rollup.config.js",
-    "build": "npm run demo && npm run dist",
     "dev": "npm run rollup -- --config rollup.dev.config.js"
   },
   "repository": {
