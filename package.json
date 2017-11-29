@@ -1,6 +1,6 @@
 {
   "name": "xexeu-view",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A view library built for learning purposes. implements the Observer design pattern.",
   "main": "dist/xexeu-view.min.js",
   "module": "dist/xexeu-view.es.js",
