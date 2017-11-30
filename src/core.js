@@ -9,6 +9,7 @@ export default class Xexeu {
     this.$_domObservers = [];
     this.$viewModel =
       this._getObservableProperties(JSON.parse(JSON.stringify(viewModel)));
+    this._originalViewModel = viewModel;
     this._bindMethodsToViewModel(methods);
     this._setupDirectives(this._parseDirectivesFromViewNode());
     this._renderInitialView(viewModel);
@@ -73,7 +74,7 @@ export default class Xexeu {
       for (let xexeuBind in item) {
         const directive = DirectiveRegistry.getDirective(xexeuBind);
         if (directive) {
-          new directive(parseBindingsFromString(item[xexeuBind], this.$viewModel), item.domNode, this);
+          new directive(parseBindingsFromString(item[xexeuBind], this._originalViewModel), item.domNode, this);
         }
       }
     }
