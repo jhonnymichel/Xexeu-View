@@ -1,5 +1,5 @@
 import { DirectiveRegistry } from './directives/directive-registry'
-import { isObject } from './utils'
+import { isObject, parseBindingsFromString } from './utils'
 import './directives/directives'
 
 export default class Xexeu {
@@ -73,7 +73,7 @@ export default class Xexeu {
       for (let xexeuBind in item) {
         const directive = DirectiveRegistry.getDirective(xexeuBind);
         if (directive) {
-          new directive(item[xexeuBind], item.domNode, this);
+          new directive(parseBindingsFromString(item[xexeuBind], this.$viewModel), item.domNode, this);
         }
       }
     }

@@ -13,17 +13,27 @@
       <input type="checkbox" xexeu-model="isChecked">
       <p>The box is checked? <span xexeu-bind="isChecked"></span></p>
     </div>
+    <p>
+      This is a really deep bind:
+      <span xexeu-bind="users[currentUser.name]['age']"></span>
+    </p>
     <script src="./xexeu-view.js"></script>
     <script type="text/javascript">
-      new Xexeu({
+      window.Xexeu = new Xexeu({
         node: '#app',
         viewModel: {
-          inputValue: 2,
-          otherInputValue: 'saske',
+          inputValue: '',
           isChecked: true,
-          newValue: {
-            test: 'it now works with nested stuff'
-          }
+          currentUserFirstKey: 'name',
+          currentUser: {name: 'John Doe'},
+          users: {
+            ['John Doe']: {
+              age: 14
+            },
+            ['Mary Foe']: {
+              age: 55
+            }
+          },
         },
         methods: {
           onInputChange(e) {

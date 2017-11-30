@@ -8,7 +8,7 @@ const { input } = config;
 export default {
   input,
   output: {
-    file: 'dev/xexeu-view.js',
+    file: 'devServer/xexeu-view.js',
     format: 'iife',
     name: "Xexeu"
   },
