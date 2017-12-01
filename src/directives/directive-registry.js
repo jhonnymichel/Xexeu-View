@@ -1,4 +1,4 @@
-import {parseBindingsFromString} from '../utils';
+import {parseBindingsFromString, deepBracket} from '../utils';
 
 class _DirectiveRegistry {
   registerDirective(name, initializer) {
@@ -75,21 +75,26 @@ export class Directive {
   }
 
   get model() {
-    const splitted = this._hooks.computedBinding.split('.');
-    let property = this._xexeuViewModel;
-    splitted.forEach((i) => property = property[i]);
-    return property;
+    try {
+      return deepBracket(this._xexeuViewModel, this._hooks.computedBinding)
+    } catch (e) {
+      return '';
+    }
   }
 
   set model(value) {
-    const splitted = this._hooks.computedBinding.split('.');
-    let property = this._xexeuViewModel;
-
-    splitted.forEach((i) => {
-      if (typeof property[i] === 'object') {
-        property = property[i]
-      }
-    });
-    property[splitted[splitted.length-1]] = value;
+    try {
+      const splitted = this._hooks.computedBinding.split('.');
+      let property = this._xexeuViewModel;
+  
+      splitted.forEach((i) => {
+        if (typeof property[i] === 'object') {
+          property = property[i]
+        }
+      });
+      property[splitted[splitted.length-1]] = value;
+    } catch (e) {
+      return;
+    }
   }
 }

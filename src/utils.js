@@ -67,10 +67,14 @@ export function parseBindingsFromString(binding, $viewModel) {
     if (bindToCompute.match(/\./)) {
       parseDeepBindings(bindToCompute, fullBindings);
       const fatherObject = computedBinding.substring(0, computedBinding.indexOf('['));
-      computedBinding = computedBinding.replace(
-        /\[(.*?)\]/,
-        `.${deepBracket($viewModel, bindToCompute)}`
-      );
+      try {
+        computedBinding = computedBinding.replace(
+          /\[(.*?)\]/,
+          `.${deepBracket($viewModel, bindToCompute)}`
+        );
+      } catch (e) {
+  
+      }
     }
     computedBinding = computedBinding.replace(`[${bindToCompute}]`, `.${$viewModel[bindToCompute]}`);
 

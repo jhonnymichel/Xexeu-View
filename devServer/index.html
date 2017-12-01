@@ -4,11 +4,11 @@
   </head>
   <body id="app">
     <div>
-      What is your name?: <input type="text" xexeu-model="inputValue">
+      What is your name?: <input type="text" xexeu-model="currentUser.name">
       What is your age?: <input type="text" xexeu-model="users[currentUser.name].age">
     </div>
     <h2>
-      Welcome, <span xexeu-bind="inputValue"></span>!
+      Welcome, <span xexeu-bind="currentUser.name"></span>!
     </h2>
     <div>
       <input type="checkbox" xexeu-model="isChecked">
