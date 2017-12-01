@@ -2,6 +2,10 @@ export function isObject (obj) {
   return (obj !== null && typeof obj === 'object');
 }
 
+export function isPropertyObservable(object, property) {
+  return Boolean(Object.getOwnPropertyDescriptor(object, property));
+}
+
 export function startAndEndsWith(str, char) {
   return (str.startsWith(char) && str.endsWith(char));
 }

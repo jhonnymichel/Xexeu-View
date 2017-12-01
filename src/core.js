@@ -1,5 +1,5 @@
 import { DirectiveRegistry } from './directives/directive-registry'
-import { isObject, parseBindingsFromString } from './utils'
+import { isObject, parseBindingsFromString, isPropertyObservable } from './utils'
 import './directives/directives'
 
 export default class Xexeu {
@@ -38,6 +38,41 @@ export default class Xexeu {
       );
   }
 
+  _createObservableProperty(property, _viewModel, _callbackPrep) {
+    let callbackList = this.$_callbacks;
+
+    const createObservableProperty = this._createObservableProperty.bind(this);
+    const getObservableProperties = this._getObservableProperties.bind(this);
+    Object.defineProperty(_viewModel, property, {
+      get() {
+        return this[`_${property}`];
+      },
+      set(value) {
+        this[`_${property}`] = value;
+
+        if (isObject(value)) {
+          if (!isPropertyObservable(_viewModel, property)) {
+            getObservableProperties(property, _callbackPrep);
+          } else {
+            for (const prop in value) {
+              const possibleProp = prop.substring(1, prop.length);
+              if (!isPropertyObservable(value, possibleProp)) {
+                const propValue = value[prop];
+                delete value[prop];
+                createObservableProperty(prop, value, _callbackPrep);
+                value[prop] = propValue;
+              }
+            }
+          }
+        }
+        if (callbackList[_callbackPrep]) {
+          callbackList[_callbackPrep].forEach(callback => callback(value, _callbackPrep));
+        }
+      }
+    });
+
+  }
+
   _getObservableProperties(viewModel, callbackPrep) {
     let callbackList = this.$_callbacks;
     let nestedObjects = {};
@@ -49,17 +84,7 @@ export default class Xexeu {
 	      nestedObjects[property] = this._getObservableProperties(viewModel[property], _callbackPrep);
       }
 
-      Object.defineProperty(_viewModel, property, {
-        get() {
-          return this[`_${property}`];
-        },
-        set(value) {
-          this[`_${property}`] = value;
-          if (callbackList[_callbackPrep]) {
-            callbackList[_callbackPrep].forEach(callback => callback(value, _callbackPrep));
-          }
-        }
-      });
+      this._createObservableProperty(property, _viewModel, _callbackPrep);
     }
 
     for (let nestedObject in nestedObjects) {
