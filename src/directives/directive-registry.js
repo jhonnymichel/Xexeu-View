@@ -24,7 +24,7 @@ export class Directive {
   constructor(hooks, node, xexeu) {
     this.node = node;
     this._hooks = hooks;
-    this._xexeuCallbacks = xexeu.$_callbacks;
+    this._callbackStash = xexeu.$_callbackStash;
     this._xexeuViewModel = xexeu.$viewModel;
     this._hookChanged = this._hookChanged.bind(this);
     this._hasSkipedFirstBinding = false;
@@ -42,20 +42,20 @@ export class Directive {
 
   _initializeHooks() {
     this._hooks.dependencies.forEach((hook) => {
-      if (!this._xexeuCallbacks[hook]) {
-        this._xexeuCallbacks[hook] = [];
+      if (!this._callbackStash[hook]) {
+        this._callbackStash[hook] = [];
       }
-      if (!this._xexeuCallbacks[hook].includes(this._hookChanged)) {
-        this._xexeuCallbacks[hook].push(this._hookChanged);
+      if (!this._callbackStash[hook].includes(this._hookChanged)) {
+        this._callbackStash[hook].push(this._hookChanged);
       }
     });
 
-    if (!this._xexeuCallbacks[this._hooks.computedBinding]) {
-      this._xexeuCallbacks[this._hooks.computedBinding] = [];
+    if (!this._callbackStash[this._hooks.computedBinding]) {
+      this._callbackStash[this._hooks.computedBinding] = [];
     }
 
-    if (this.$modelChanged && !this._xexeuCallbacks[this._hooks.computedBinding].includes(this.$modelChanged)) {
-      this._xexeuCallbacks[this._hooks.computedBinding].push(this.$modelChanged);
+    if (this.$modelChanged && !this._callbackStash[this._hooks.computedBinding].includes(this.$modelChanged)) {
+      this._callbackStash[this._hooks.computedBinding].push(this.$modelChanged);
     }
     if (typeof this.model === 'function') {
       this.triggerHook = this.model;
