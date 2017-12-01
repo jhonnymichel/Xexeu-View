@@ -9,8 +9,10 @@ export default class Xexeu {
     this.$_callbackStash = {};
     this.$_domObservers = [];
     this._observableManager = new ObservableManager(this.$_callbackStash);
-    this.$viewModel =
-      this._observableManager.createObjectObservables(JSON.parse(JSON.stringify(viewModel)));
+    Object.defineProperty(this, '$viewModel', {
+      value: this._observableManager.createObjectObservables(JSON.parse(JSON.stringify(viewModel))),
+      writable: false
+    });
     this._originalViewModel = viewModel;
     this._bindMethodsToViewModel(methods);
     this._setupDirectives(this._parseDirectivesFromViewNode());

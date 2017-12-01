@@ -56,7 +56,7 @@ export default class ObservableManager {
   createObjectObservables(object, stringBinding) {
     let callbackList = this.$_callbacks;
     let nestedObjects = {};
-    const _object = {};
+    const _object = Array.isArray(object) && [] || {};
     for (const property in object) {
       const _stringBinding = stringBinding ? stringBinding + '.' + property : property;
 
