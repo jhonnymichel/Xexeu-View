@@ -27,6 +27,7 @@ export class Directive {
     this._xexeuCallbacks = xexeu.$_callbacks;
     this._xexeuViewModel = xexeu.$viewModel;
     this._hookChanged = this._hookChanged.bind(this);
+    this._hasSkipedFirstBinding = false;
 
     if (this.$modelChanged) {
       this.$modelChanged = this.$modelChanged.bind(this);
@@ -62,7 +63,15 @@ export class Directive {
   }
 
   _hookChanged() {
-    this._hooks = parseBindingsFromString(this._hooks.computedBinding);
+    if (this._hasSkipedFirstBinding) {
+      this._hooks = parseBindingsFromString(this._hooks.stringBinding, this._xexeuViewModel);
+      this._initializeHooks();
+      if (this.$modelChanged) {
+        this.$modelChanged(this.model);
+      }
+    } else {
+      this._hasSkipedFirstBinding = true;
+    }
   }
 
   get model() {

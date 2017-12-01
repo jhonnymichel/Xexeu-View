@@ -54,10 +54,10 @@ export default class Xexeu {
           return this[`_${property}`];
         },
         set(value) {
-          if (callbackList[_callbackPrep]) {
-            callbackList[_callbackPrep].forEach(callback => callback(value));
-          }
           this[`_${property}`] = value;
+          if (callbackList[_callbackPrep]) {
+            callbackList[_callbackPrep].forEach(callback => callback(value, _callbackPrep));
+          }
         }
       });
     }

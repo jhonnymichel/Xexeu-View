@@ -17,6 +17,7 @@ describe('parseBindingsFromString', () => {
     const bind = 'users[currentUser.name].age';
     const result = parseBindingsFromString(bind, $viewModel);
     expect(result).toEqual({
+      stringBinding: bind,
       computedBinding: 'users.John Doe.age',
       dependencies: [
         'currentUser.name',
@@ -44,6 +45,7 @@ describe('parseBindingsFromString', () => {
     const bind = 'users[currentUser[currentUserFirstKey]].age';
     const result = parseBindingsFromString(bind, $viewModel);
     expect(result).toEqual({
+      stringBinding: bind,
       computedBinding: 'users.John Doe.age',
       dependencies: [
         'currentUserFirstKey',
@@ -73,6 +75,7 @@ describe('parseBindingsFromString', () => {
     const bind = 'users[currentUser["name"]]["age"]';
     const result = parseBindingsFromString(bind, $viewModel);
     expect(result).toEqual({
+      stringBinding: bind,
       computedBinding: 'users.John Doe.age',
       dependencies: [
        'currentUser.name',
@@ -123,6 +126,7 @@ describe('parseBindingsFromString', () => {
     const bind = 'users[currentUser[currentUserFirstKey]][ageKey]';
     const result = parseBindingsFromString(bind, $viewModel);
     expect(result).toEqual({
+      stringBinding: bind,
       computedBinding: 'users.John Doe.age',
       dependencies: [
         'ageKey',

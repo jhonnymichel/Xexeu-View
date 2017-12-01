@@ -79,6 +79,8 @@ export function parseBindingsFromString(binding, $viewModel) {
   parseDeepBindings(computedBinding, fullBindings);
 
   return {
-    computedBinding, dependencies: fullBindings
+    stringBinding: binding,
+    computedBinding, 
+    dependencies: fullBindings
   }
 }
