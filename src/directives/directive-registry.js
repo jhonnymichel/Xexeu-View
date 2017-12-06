@@ -76,7 +76,7 @@ export class Directive {
 
   get model() {
     try {
-      return deepBracket(this._xexeuViewModel, this._hooks.computedBinding)
+      return deepBracket(this._xexeuViewModel, this._hooks.computedBinding, true)
     } catch (e) {
       return '';
     }

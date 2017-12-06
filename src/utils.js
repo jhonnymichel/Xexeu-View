@@ -10,9 +10,9 @@ export function isValidBindingExpression(expression) {
   return ((expression.match(/\[/g) || []).length === (expression.match(/\]/g) || []).length);
 }
 
-export function deepBracket(obj, path) {
+export function deepBracket(obj, path, wantsValue=false) {
   if (!path.match(/\./)) {
-    return path;
+    return wantsValue ? obj[path] : path;
   }
   const splitted = path.split('.');
   let property = obj;
