@@ -3,32 +3,34 @@
 
   </head>
   <body id="app">
-    <div>
-      What is your name?: <input type="text" xexeu-model="currentUser.name">
-      What is your age?: <input type="text" xexeu-model="users[currentUser.name].age">
-    </div>
+    <form xexeu-submit="onClick">
+      <input type="checkbox" xexeu-model="isChecked">
+      <h1>Add a new user!</h1>
+      What is the new user name?: <input type="text" xexeu-model="newUser.name">
+      What is the new user age?: <input type="text" xexeu-model="newUser.age">
+      <p>
+        Click 'Add User' to submit the user
+        <span xexeu-bind="newUser.name"></span>, of age <span xexeu-bind="newUser.age"></span>
+      </p>
+      <button>Add User!</button>
+    </form>
     <h2>
-      Welcome, <span xexeu-bind="currentUser.name"></span>!
       Edward Elric is <span xexeu-bind="users['Edward Elric'].age"></span> yo!
     </h2>
     <div>
-      <input type="checkbox" xexeu-model="isChecked">
       <p>The box is checked? <span xexeu-bind="isChecked"></span></p>
     </div>
     <p>
-      This is a really deep bind:
-      <span xexeu-bind="users[currentUser.name]['age']"></span>
+      There are currently
+      <span xexeu-bind="usersLength"></span>
+      users!
     </p>
     <script src="./xexeu-view.js"></script>
     <script type="text/javascript">
       window.Xexeu = new Xexeu({
         node: '#app',
         viewModel: {
-          inputValue: '',
-          isChecked: true,
-          currentUserFirstKey: 'name',
-          currentUser: {name: 'John Doe'},
-          list: [1, 2, 3],
+          newUser: {name: null, age: null},
           users: {
             ['John Doe']: {
               age: 14
@@ -37,13 +39,22 @@
               age: 55
             }
           },
+          isChecked: true,
+          usersLength: 2,
         },
         methods: {
-          onInputChange(e) {
-            this.inputValue = e.target.value;
-          },
-          onNewInputChange(e) {
-            this.otherInputValue = e.target.value;
+          onClick(e) {
+            this.users = Object.assign({}, this.users, {
+              [this.newUser.name]: {
+                age: this.newUser.age
+              }
+            });
+            this.usersLength = Object.keys(this.users).length;
+            this.newUser = {
+              name: '',
+              age: '',
+            }
+            e.preventDefault();
           }
         }
       });

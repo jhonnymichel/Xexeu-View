@@ -22,10 +22,42 @@ class XexeuModel extends Directive {
 
 DirectiveRegistry.registerDirective('xexeu-model', XexeuModel);
 
-class XexeuChange extends Directive {
-  $created(node) {
-    node.addEventListener('input', this.triggerHook);
+function ActionCallbackDirectiveFactory(eventType, directiveName) {
+  return class extends Directive {
+    $created() {
+      console.log(directiveName);
+      this._addEventListener();
+    }
+  
+    $hookChanged() {
+      this.node.removeEventListener(eventType, this._currentHook);
+      this._addEventListener();
+    }
+  
+    _addEventListener() {
+      if (!this.triggerHook) {
+        return;
+      }
+      if (typeof this.triggerHook !== 'function') {
+        return console.error(`${directiveName} binding should be a function`);
+      }
+      this._currentHook = this.triggerHook;
+      this.node.addEventListener(eventType, this._currentHook);
+    }
   }
 }
 
-DirectiveRegistry.registerDirective('xexeu-change', XexeuChange);
+DirectiveRegistry.registerDirective(
+  'xexeu-submit',
+  ActionCallbackDirectiveFactory('submit', 'xexeu-submit')
+);
+
+DirectiveRegistry.registerDirective(
+  'xexeu-change',
+  ActionCallbackDirectiveFactory('input', 'xexeu-change')
+);
+
+DirectiveRegistry.registerDirective(
+  'xexeu-click',
+  ActionCallbackDirectiveFactory('click', 'xexeu-click')
+);
