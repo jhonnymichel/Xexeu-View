@@ -1,4 +1,5 @@
-import {parseBindingsFromString, deepBracket} from '../utils';
+import {parseBindingsFromString, deepBracket, isObject} from '../utils';
+import ObservableManager from '../observable-manager';
 
 class _DirectiveRegistry {
   registerDirective(name, initializer) {
@@ -18,7 +19,7 @@ class _DirectiveRegistry {
   }
 }
 
-export const DirectiveRegistry = new _DirectiveRegistry() 
+export const DirectiveRegistry = new _DirectiveRegistry()
 
 export class Directive {
   constructor(hooks, node, xexeu) {
@@ -28,6 +29,7 @@ export class Directive {
     this._xexeuViewModel = xexeu.$viewModel;
     this._hookChanged = this._hookChanged.bind(this);
     this._hasSkipedFirstBinding = false;
+    this._observableManager = xexeu._observableManager;
 
     if (this.$modelChanged) {
       this.$modelChanged = this.$modelChanged.bind(this);
@@ -85,14 +87,27 @@ export class Directive {
   set model(value) {
     try {
       const splitted = this._hooks.computedBinding.split('.');
-      let property = this._xexeuViewModel;
-  
+      let objectToChange = this._xexeuViewModel;
+      let parentObject;
+
       splitted.forEach((i) => {
-        if (typeof property[i] === 'object') {
-          property = property[i]
+        if (isObject(objectToChange[i])) {
+          parentObject = objectToChange;
+          objectToChange = objectToChange[i]
         }
       });
-      property[splitted[splitted.length-1]] = value;
+      const keyToSet = splitted[splitted.length-1];
+      if (!ObservableManager.isPropertyObservable(objectToChange, keyToSet)) {
+        if (splitted.length === 1) {
+          this._observableManager.createObservableProperty(keyToSet, this._xexeuViewModel, this._hooks.computedBinding);
+        } else {
+          const keyFromObjectToChange = splitted[splitted.length-2];
+          parentObject[keyFromObjectToChange] = Object.assign(objectToChange, {
+            [keyToSet]: value
+          });
+        }
+      }
+      objectToChange[keyToSet] = value;
     } catch (e) {
       return;
     }
